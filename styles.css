@@ -1,0 +1,135 @@
+body {
+  font-family: 'Arial', sans-serif;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background: linear-gradient(135deg, #8e44ad, #9b59b6); /* Purple gradient background */
+  color: #333;
+}
+
+.container {
+  text-align: center;
+  background: rgba(255, 255, 255, 0.9); /* Semi-transparent white for contrast */
+  padding: 30px;
+  border-radius: 15px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+  width: 90%;
+  max-width: 800px;
+}
+
+h1 {
+  margin-bottom: 20px;
+  font-size: 2rem;
+  color: #8e44ad;
+  text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+.video-container {
+  position: relative;
+  margin-bottom: 20px;
+  display: inline-block; /* Wrap around content */
+  width: 320px; /* Default small width */
+  height: 240px; /* Default small height */
+  transition: all 0.3s ease; /* Smooth size transition */
+  overflow: hidden;
+}
+
+.video-container.active {
+  width: 640px; /* Full width when monitoring starts */
+  height: 480px; /* Full height when monitoring starts */
+}
+
+video, canvas {
+  border-radius: 15px;
+  width: 100%; /* Fill the container */
+  height: 100%; /* Fill the container */
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  display: block; /* Prevents inline spacing issues */
+}
+
+canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  object-fit: contain; /* Prevents stretching or cropping */
+}
+
+.status {
+  margin-bottom: 20px;
+  font-size: 1.1rem;
+}
+
+.status div {
+  margin: 10px 0;
+  font-weight: bold;
+}
+
+.controls {
+  margin-bottom: 20px;
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+}
+
+button {
+  padding: 12px 25px;
+  font-size: 1rem;
+  font-weight: bold;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s, transform 0.2s;
+  background-color: #8e44ad;
+  color: white;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+button:hover {
+  background-color: #732d91;
+  transform: scale(1.05);
+}
+
+button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+label {
+  font-size: 1rem;
+  font-weight: bold;
+  color: #555;
+}
+.video-container {
+  position: relative;
+  margin-bottom: 20px;
+  display: inline-block; /* Wrap around content */
+  width: 320px; /* Default small width */
+  height: 240px; /* Default small height */
+  transition: all 0.3s ease; /* Smooth size transition */
+  overflow: hidden;
+}
+
+.video-container.active {
+  width: 640px; /* Full width when monitoring starts */
+  height: 480px; /* Full height when monitoring starts */
+}
+
+video, canvas {
+  border-radius: 15px;
+  width: 100%; /* Fill the container */
+  height: 100%; /* Fill the container */
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  display: block; /* Prevents inline spacing issues */
+}
+
+canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  object-fit: contain; /* Prevents stretching or cropping */
+}
