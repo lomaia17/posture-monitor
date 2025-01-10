@@ -5,6 +5,19 @@ let isMonitoring = false;
 let pose;
 let lastBadPostureTime = 0;
 let alertFrequencyMinutes = 5;
+let isFirstFrameProcessed = false; // Track if the first frame is processed
+
+// Show loading spinner
+function showLoadingSpinner() {
+  const spinner = document.getElementById('loading-spinner');
+  spinner.style.display = 'block';
+}
+
+// Hide loading spinner
+function hideLoadingSpinner() {
+  const spinner = document.getElementById('loading-spinner');
+  spinner.style.display = 'none';
+}
 
 // Set up the camera
 async function setupCamera() {
@@ -19,6 +32,11 @@ async function setupCamera() {
       video.onloadedmetadata = () => {
         video.play();
         resolve(video);
+      };
+      video.onerror = (err) => {
+        console.error('Video playback error:', err);
+        alert('Error playing video. Please check your camera and browser permissions.');
+        throw err;
       };
     });
   } catch (err) {
@@ -48,55 +66,22 @@ async function loadMediaPipePose() {
   pose.onResults(onPoseResults);
 }
 
-// Handle pose detection results
-let audio = new Audio('bad_posture_sound.mp3'); // Path to your alert sound file
-let isSoundPlaying = false; // To track the state of the sound
-
-function onPoseResults(results) {
-  if (!isMonitoring) return;
-
-  // Clear the canvas
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-  // Draw the video feed
-  ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-
-  // Draw keypoints and skeleton
-  if (results.poseLandmarks) {
-    drawLandmarks(results.poseLandmarks);
-    drawConnectors(results.poseLandmarks, Pose.POSE_CONNECTIONS, { color: '#00FF00', lineWidth: 2 });
-
-    // Check posture and update status
-    const isBadPosture = isPostureBad(results.poseLandmarks);
-    document.getElementById('posture-status').textContent =
-      `Posture Status: ${isBadPosture ? 'Bad Posture!' : 'Good Posture'}`;
-
-    // Play sound if bad posture is detected
-    if (isBadPosture && !isSoundPlaying) {
-      audio.play();
-      isSoundPlaying = true;
-    }
-
-    // Stop sound if posture improves
-    if (!isBadPosture && isSoundPlaying) {
-      audio.pause();
-      audio.currentTime = 0; // Reset the sound to the beginning
-      isSoundPlaying = false;
-    }
-  }
+// Helper function to calculate the angle between three points
+function calculateAngle(a, b, c) {
+  const ab = { x: b.x - a.x, y: b.y - a.y };
+  const cb = { x: b.x - c.x, y: b.y - c.y };
+  const dot = ab.x * cb.x + ab.y * cb.y;
+  const cross = ab.x * cb.y - ab.y * cb.x;
+  const angle = Math.atan2(cross, dot) * (180 / Math.PI);
+  return Math.abs(angle);
 }
 
-
-// Draw landmarks on the canvas
-function drawLandmarks(landmarks) {
-  landmarks.forEach(landmark => {
-    const { x, y } = landmark;
-    ctx.beginPath();
-    ctx.arc(x * canvas.width, y * canvas.height, 5, 0, 2 * Math.PI);
-    ctx.fillStyle = 'aqua';
-    ctx.fill();
-  });
+// Helper function to calculate arm angle
+function calculateArmAngle(shoulder, elbow, wrist) {
+  return calculateAngle(shoulder, elbow, wrist);
 }
+
+// Function to check if posture is bad
 function isPostureBad(landmarks) {
   const nose = landmarks[0]; // MediaPipe Pose landmark index for nose
   const leftShoulder = landmarks[11]; // MediaPipe Pose landmark index for left shoulder
@@ -134,7 +119,6 @@ function isPostureBad(landmarks) {
     // Calculate shoulder width (scale factor)
     const shoulderWidth = Math.abs(leftShoulder.x - rightShoulder.x);
 
-
     // Define thresholds for bad posture
     const BAD_HEAD_FORWARD_THRESHOLD = 0.05; // Adjust based on testing
     const BAD_SHOULDER_TILT_THRESHOLD = 0.1; // Adjust based on testing
@@ -158,25 +142,70 @@ function isPostureBad(landmarks) {
   return false;
 }
 
-// Helper function to calculate the angle between three points
-function calculateAngle(a, b, c) {
-  const ab = { x: b.x - a.x, y: b.y - a.y };
-  const cb = { x: b.x - c.x, y: b.y - c.y };
-  const dot = ab.x * cb.x + ab.y * cb.y;
-  const cross = ab.x * cb.y - ab.y * cb.x;
-  const angle = Math.atan2(cross, dot) * (180 / Math.PI);
-  return Math.abs(angle);
+// Handle pose detection results
+let audio = new Audio('bad_posture_sound.mp3'); // Path to your alert sound file
+let isSoundPlaying = false; // To track the state of the sound
+
+function onPoseResults(results) {
+  if (!isMonitoring) return;
+
+  // Clear the canvas
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  // Draw the video feed
+  ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+  // Draw keypoints and skeleton
+  if (results.poseLandmarks) {
+    drawLandmarks(results.poseLandmarks);
+    drawConnectors(results.poseLandmarks, Pose.POSE_CONNECTIONS, { color: '#00FF00', lineWidth: 2 });
+
+    // Hide loading spinner after the first frame is processed
+    if (!isFirstFrameProcessed) {
+      hideLoadingSpinner();
+      isFirstFrameProcessed = true;
+    }
+
+    // Check posture and update status
+    const isBadPosture = isPostureBad(results.poseLandmarks);
+    document.getElementById('posture-status').textContent =
+      `Posture Status: ${isBadPosture ? 'Bad Posture!' : 'Good Posture'}`;
+
+    // Play sound if bad posture is detected
+    if (isBadPosture && !isSoundPlaying) {
+      audio.play();
+      isSoundPlaying = true;
+    }
+
+    // Stop sound if posture improves
+    if (!isBadPosture && isSoundPlaying) {
+      audio.pause();
+      audio.currentTime = 0; // Reset the sound to the beginning
+      isSoundPlaying = false;
+    }
+  }
 }
 
-// Helper function to calculate arm angle
-function calculateArmAngle(shoulder, elbow, wrist) {
-  return calculateAngle(shoulder, elbow, wrist);
+// Draw landmarks on the canvas
+function drawLandmarks(landmarks) {
+  ctx.beginPath();
+  landmarks.forEach(landmark => {
+    const { x, y } = landmark;
+    ctx.moveTo(x * canvas.width + 5, y * canvas.height);
+    ctx.arc(x * canvas.width, y * canvas.height, 5, 0, 2 * Math.PI);
+  });
+  ctx.fillStyle = 'aqua';
+  ctx.fill();
 }
+
 // Start monitoring
 async function startMonitoring() {
   if (isMonitoring) return;
 
   try {
+    // Show loading spinner
+    showLoadingSpinner();
+
     canvas = document.getElementById('canvas');
     ctx = canvas.getContext('2d');
 
@@ -201,12 +230,14 @@ async function startMonitoring() {
     const sendFrame = async () => {
       if (!isMonitoring) return;
       await pose.send({ image: video });
-      requestAnimationFrame(sendFrame);
+      requestAnimationFrame(sendFrame); // Use requestAnimationFrame for smooth frame updates
     };
     sendFrame();
+    
   } catch (err) {
     console.error('Error starting monitoring:', err);
     alert('Error starting monitoring. Please check your camera and MediaPipe setup.');
+    hideLoadingSpinner(); // Hide spinner in case of error
   }
 }
 
