@@ -6,6 +6,13 @@ let pose;
 let lastBadPostureTime = 0;
 let alertFrequencyMinutes = 5;
 let isFirstFrameProcessed = false; // Track if the first frame is processed
+let breakTimer; // Timer for break reminders
+let breakInterval = 30 * 60 * 1000; // Default break interval: 30 minutes (in milliseconds)
+
+// Audio objects
+let audio = new Audio('bad_posture_sound.mp3'); // Path to your bad posture sound file
+let breakReminderAudio = new Audio('alert.mp3'); // Path to your break reminder sound file
+let isSoundPlaying = false; // To track the state of the sound
 
 // Show loading spinner
 function showLoadingSpinner() {
@@ -17,6 +24,38 @@ function showLoadingSpinner() {
 function hideLoadingSpinner() {
   const spinner = document.getElementById('loading-spinner');
   spinner.style.display = 'none';
+}
+
+// Show break reminder
+function showBreakReminder() {
+  const reminder = document.getElementById('break-reminder');
+  reminder.style.display = 'block';
+
+  // Play the break reminder sound
+  breakReminderAudio.play();
+}
+
+// Hide break reminder
+function hideBreakReminder() {
+  const reminder = document.getElementById('break-reminder');
+  reminder.style.display = 'none';
+
+  // Stop and reset the break reminder sound
+  breakReminderAudio.pause();
+  breakReminderAudio.currentTime = 0; // Reset the sound to the beginning
+}
+
+// Start break reminder timer
+function startBreakTimer() {
+  breakTimer = setTimeout(() => {
+    showBreakReminder(); // Show reminder when the timer ends
+  }, breakInterval);
+}
+
+// Reset break reminder timer
+function resetBreakTimer() {
+  clearTimeout(breakTimer); // Clear the existing timer
+  startBreakTimer(); // Start a new timer
 }
 
 // Set up the camera
@@ -143,9 +182,6 @@ function isPostureBad(landmarks) {
 }
 
 // Handle pose detection results
-let audio = new Audio('bad_posture_sound.mp3'); // Path to your alert sound file
-let isSoundPlaying = false; // To track the state of the sound
-
 function onPoseResults(results) {
   if (!isMonitoring) return;
 
@@ -226,6 +262,9 @@ async function startMonitoring() {
     document.getElementById('startBtn').disabled = true;
     document.getElementById('stopBtn').disabled = false;
 
+    // Start break reminder timer
+    startBreakTimer();
+
     // Start sending frames to MediaPipe Pose
     const sendFrame = async () => {
       if (!isMonitoring) return;
@@ -255,10 +294,19 @@ function stopMonitoring() {
   document.getElementById('startBtn').disabled = false;
   document.getElementById('stopBtn').disabled = true;
   document.getElementById('posture-status').textContent = 'Posture Status: Monitoring Stopped';
+
+  // Stop break reminder timer
+  clearTimeout(breakTimer);
 }
 
 // Event listeners
 document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('startBtn').addEventListener('click', startMonitoring);
   document.getElementById('stopBtn').addEventListener('click', stopMonitoring);
+
+  // Close break reminder
+  document.getElementById('close-break-reminder').addEventListener('click', () => {
+    hideBreakReminder();
+    resetBreakTimer(); // Reset the timer after acknowledging the reminder
+  });
 });

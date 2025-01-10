@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Posture Monitor</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="container">
+    <h1>Monitor Your Posture</h1>
+    <div class="video-container" id="video-container">
+      <!-- Loading Spinner -->
+      <div id="loading-spinner" class="loading-spinner"></div>
+      <video id="video" width="640" height="480"></video>
+      <canvas id="canvas"></canvas>
+    </div>
+    <div>
+      <button id="startBtn">Start Monitoring</button>
+      <button id="stopBtn" disabled>Stop Monitoring</button>
+    </div>
+    <p id="posture-status">Posture Status: --</p>
+    <!-- Break Reminder Modal -->
+    <div id="break-reminder" class="break-reminder-modal">
+      <div class="break-reminder-content">
+        <h2>Time for a Break!</h2>
+        <p>You've been sitting for a while. Take a short break to stretch and relax.</p>
+        <button id="close-break-reminder">OK</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MediaPipe Pose -->
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/control_utils/control_utils.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/pose/pose.js"></script>
+
+  <script src="script.js"></script>
+</body>
+</html>

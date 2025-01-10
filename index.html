@@ -4,30 +4,59 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>AI Posture Monitor</title>
-  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
-  <div class="container">
-    <h1>Monitor Your Posture</h1>
-    <div class="video-container" id="video-container">
-      <!-- Loading Spinner -->
-      <div id="loading-spinner" class="loading-spinner"></div>
-      <video id="video" width="640" height="480"></video>
-      <canvas id="canvas"></canvas>
+  <!-- Hero Section -->
+  <section class="hero">
+    <div class="hero-content">
+      <h1>Improve Your Posture with AI</h1>
+      <p>Monitor your posture in real-time and get alerts to sit straight and take breaks.</p>
+      <a href="monitor.html" class="cta-button">Start Monitoring</a>
     </div>
-    <div>
-      <button id="startBtn">Start Monitoring</button>
-      <button id="stopBtn" disabled>Stop Monitoring</button>
+  </section>
+
+  <!-- Features Section -->
+  <section class="features">
+    <h2>Why Choose AI Posture Monitor?</h2>
+    <div class="feature-list">
+      <div class="feature">
+        <h3>Real-Time Monitoring</h3>
+        <p>Get instant feedback on your posture using your webcam.</p>
+      </div>
+      <div class="feature">
+        <h3>Break Reminders</h3>
+        <p>Receive reminders to take breaks and stretch regularly.</p>
+      </div>
+      <div class="feature">
+        <h3>Easy to Use</h3>
+        <p>No setup required. Just click "Start Monitoring" and follow the instructions.</p>
+      </div>
     </div>
-    <p id="posture-status">Posture Status: --</p>
-  </div>
+  </section>
 
-  <!-- MediaPipe Pose -->
-  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/control_utils/control_utils.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/pose/pose.js"></script>
+  <!-- How It Works Section -->
+  <section class="how-it-works">
+    <h2>How It Works</h2>
+    <div class="steps">
+      <div class="step">
+        <h3>Step 1</h3>
+        <p>Allow access to your webcam.</p>
+      </div>
+      <div class="step">
+        <h3>Step 2</h3>
+        <p>Start monitoring your posture in real-time.</p>
+      </div>
+      <div class="step">
+        <h3>Step 3</h3>
+        <p>Get alerts and tips to improve your posture.</p>
+      </div>
+    </div>
+  </section>
 
-  <script src="script.js"></script>
+  <!-- Footer -->
+  <footer>
+    <p>&copy; 2025 AI Posture Monitor. All rights reserved.</p>
+  </footer>
 </body>
 </html>
