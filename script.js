@@ -10,8 +10,8 @@ let breakTimer; // Timer for break reminders
 let breakInterval = 30 * 60 * 1000; // Default break interval: 30 minutes (in milliseconds)
 
 // Audio objects
-let audio = new Audio('bad_posture_sound.mp3'); // Path to your bad posture sound file
-let breakReminderAudio = new Audio('alert.mp3'); // Path to your break reminder sound file
+let audio = new Audio('assets/sounds/bad_posture_sound.mp3');
+let breakReminderAudio = new Audio('assets/sounds/alert.mp3'); 
 let isSoundPlaying = false; // To track the state of the sound
 
 // Show loading spinner
